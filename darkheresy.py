@@ -46,7 +46,7 @@ def rawRollDamage( func, weapon ):
 	tirada = func()
 	if (tirada == 10) and EXPAND:
 		extra = 0
-		while(atackRoll(weapon)):
+		while(attackRoll(weapon)):
 			tirada = func()
 			extra = extra + tirada
 			if (tirada != 10):
@@ -55,7 +55,7 @@ def rawRollDamage( func, weapon ):
 	return tirada
 
 
-def damage(weapon):
+def damageRoll(weapon):
 
 	r,k,bonificador = parse_input(weapon['damage'])
 
@@ -82,7 +82,17 @@ def damage(weapon):
 	return sum(rolls[:r]) + bonificador
 
 
-def atackRoll( weapon ):
+def parryRoll( weapon ):
+	bonificador = 0 ;
+	if 'properties' in weapon:
+		if 'EQUILIBRADA' in weapon['properties']:
+			bonificador = bonificador + 10
+	return D100() <= (weapon['caracteristica'] + bonificador)
+
+def initiativeRoll( player ):
+	return D10() + (player['agility']/10)
+
+def attackRoll( weapon ):
 	bonificador = 0 ;
 	if 'properties' in weapon:
 		if 'MEJORCALIDAD' in weapon['properties']:
