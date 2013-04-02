@@ -79,6 +79,7 @@ def simulaCombate(pj1, pj2):
 	rounds = 0
 	while( first['wounds'] > 0 and last['wounds'] > 0 and rounds < 100):
 		
+		print "Turno: ", rounds
 		# Ataque 
 		atack = darkheresy.attackRoll(first['weapon'])
 
