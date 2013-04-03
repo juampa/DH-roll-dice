@@ -47,7 +47,7 @@ pjs = [
 				},
 		'wounds' : 13,
 		'agility' : 39,
-		'toughness' : 40,
+		'toughness' : 35,
 		'armour' : 4
 	}
 ]
