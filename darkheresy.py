@@ -55,7 +55,7 @@ def rawRollDamage( func, weapon ):
 	return tirada
 
 
-def damageRoll(weapon):
+def weaponRollDamage(weapon):
 
 	r,k,bonificador = parse_input(weapon['damage'])
 
@@ -81,6 +81,15 @@ def damageRoll(weapon):
 	# Nos quedamos con las r primeras y las sumamos...
 	return sum(rolls[:r]) + bonificador
 
+def damageRoll(attacker, defender):
+	damage = weaponRollDamage(attacker['weapon'])
+
+	# Descontamos armadura y bonificacion por resistencia.
+	damage = damage - defender['armour']
+	damage = damage - (defender['toughness']/10)
+
+	result = damage if damage >= 0 else 0
+	return result 
 
 def parryRoll( weapon ):
 	bonificador = 0 ;

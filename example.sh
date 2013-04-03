@@ -1,12 +1,15 @@
 #!/usr/bin/python
+# coding=UTF-8
+
 import math
 from numpy import array
 from numpy import nonzero
 from random import randrange
 import darkheresy
+import copy
 
 ARMAS_CC = 39
-NUMREPETICIONES = 10
+NUMREPETICIONES = 1000
 DEBUG = False
 
 
@@ -29,7 +32,9 @@ pjs = [
 					'properties' : { 'EQUILIBRADA' : True  }
 				},
 		'wounds' : 13,
-		'agility' : 31
+		'agility' : 31,
+		'toughness' : 35,
+		'armour' : 3
 	},
 	{
 		'name' : 'Kratos',
@@ -41,7 +46,9 @@ pjs = [
 					'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
 				},
 		'wounds' : 13,
-		'agility' : 39
+		'agility' : 39,
+		'toughness' : 40,
+		'armour' : 4
 	}
 ]
 
@@ -66,37 +73,46 @@ def simulaCombate(pj1, pj2):
 	# De momento un simple intercambio de golpes rebajando la hasta llegar a 0...
 
 	# Definimos la iniciativa.
-	initiative_sorted_pjs = sorted([pj1,pj2], key=lambda k: darkheresy.initiativeRoll(k)) 
+	# HAY QUE CONTROLAR EL EMPATE !!! 
 
-	first = initiative_sorted_pjs[0]
-	last = initiative_sorted_pjs[1]
+	initiative1 = darkheresy.initiativeRoll(pj1)
+	initiative2 = darkheresy.initiativeRoll(pj2) 
+	
+	if (initiative1 > initiative2):
+		first = copy.deepcopy(pj1)
+		last = copy.deepcopy(pj2)
+	else:
+		first = copy.deepcopy(pj2)
+		last = copy.deepcopy(pj1)
 
-	# print first.keys()
-	# print last.keys()
-
-	print "Combat start", first['wounds'] , last['wounds']
-
+	
+	narracion = []
+	narracion.append("Combat start: %s  VS %s" % (first['name'] , last['name']))
+	
 	rounds = 0
 	while( first['wounds'] > 0 and last['wounds'] > 0 and rounds < 100):
 		
-		print "Turno: ", rounds
+		narracion.append("Turno: %d" % rounds)
 		# Ataque 
 		atack = darkheresy.attackRoll(first['weapon'])
 
 		if atack:
 
-			print '{0} ha conseguido impactar a {1}'.format(first['name'],last['name'])
+			narracion.append('{0} ha conseguido impactar a {1}'.format(first['name'],last['name']))
 			# Parada
 			parry = darkheresy.parryRoll(last['weapon'])
 			# Si no hay parada llega el danio
 			if not parry:
-				damage = darkheresy.damageRoll(first['weapon'])
+				damage = darkheresy.damageRoll(first, last)
 				last['wounds'] = last['wounds'] - damage
-				print 'El ataque ha causado {0} puntos a {1} y su salud baja a {2}'.format(damage, last['name'], last['wounds'])
+				if (damage > 0):
+					narracion.append('   El ataque ha causado {0} puntos a {1} y su salud baja a {2}'.format(damage, last['name'], last['wounds']))
+				else:
+					narracion.append('   El ataque no ha causado daños')
 			else:
-				print '   Pero {0} ha conseguido parar el ataque'.format(last['name'])
+				narracion.append('   Pero {0} ha conseguido parar el ataque'.format(last['name']))
 		else:
-			print '{0} ha fallado el ataque'.format(first['name'])	
+			narracion.append('{0} ha fallado el ataque'.format(first['name']))	
 		# Si el 1 sigue en pie seguimos...
 		if (last['wounds'] > 0):
 			# Ataque 
@@ -104,28 +120,36 @@ def simulaCombate(pj1, pj2):
 
 			if atack:
 
-				print '{0} ha conseguido impactar a {1}'.format(last['name'],first['name'])
+				narracion.append('{0} ha conseguido impactar a {1}'.format(last['name'],first['name']))
 
 				# Parada
 				parry = darkheresy.parryRoll(first['weapon'])
 				# Si no hay parada llega el danio
 				if not parry:
-					damage = darkheresy.damageRoll(last['weapon'])
+					damage = darkheresy.damageRoll(last,first)
 					first['wounds'] = first['wounds'] - damage
-					print 'El ataque ha causado {0} puntos a {1} y su salud baja a {2}'.format(damage, first['name'], first['wounds'])
+					if (damage > 0):
+						narracion.append('   El ataque ha causado {0} puntos a {1} y su salud baja a {2}'.format(damage, first['name'], first['wounds']))
+					else:
+						narracion.append('   El ataque no ha causado daños')
 				else:
-					print '   Pero {0} ha conseguido parar el ataque'.format(first['name'])
+					narracion.append('   Pero {0} ha conseguido parar el ataque'.format(first['name']))
 			else:
-				print '{0} ha fallado el ataque'.format(last['name'])
+				narracion.append('{0} ha fallado el ataque'.format(last['name']))
 
 		rounds = rounds + 1
 	
-	print 'Fin del combate: GANADOR', sorted(initiative_sorted_pjs, key=lambda k: k['wounds'])[1]['name']
+	if DEBUG:
+		print "\n".join(narracion)
+
+	ganador = sorted([first,last], key=lambda k: k['wounds'])[1]['name']
+	# print 'Fin del combate: GANADOR', ganador
+
+	return ganador
 
 
 
-
-def main():
+def simulaArmas():
 
 	print "TOTAL PRUEBAS: ",  NUMREPETICIONES
 
@@ -134,7 +158,7 @@ def main():
 		tiradas = []
 		for i in range(NUMREPETICIONES):
 			if darkheresy.atackRoll(arma):
-				tiradas.append(darkheresy.damageRoll(arma))
+				tiradas.append(darkheresy.weaponRollDamage(arma))
 			else:
 				tiradas.append(0)
 		a = array(tiradas)
@@ -148,5 +172,13 @@ def main():
 			print tiradas
 	print result 
 
+def main():
+	tiradas = []
+	for i in range(NUMREPETICIONES):
+		tiradas.append(simulaCombate(pjs[0], pjs[1]))
+
+	print "Combates ganados por : %s -> %d" % (pjs[0]['name'], tiradas.count(pjs[0]['name']))
+	print "Combates ganados por : %s -> %d" % (pjs[1]['name'], tiradas.count(pjs[1]['name']))
+
 if  __name__ =='__main__':
-	simulaCombate(pjs[0], pjs[1])
+	main()
