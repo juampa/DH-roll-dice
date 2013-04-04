@@ -56,6 +56,9 @@ class Character:
 	def isAlive(self):
 		return not self.isDead()
 
+	def bonifAgilidad(self):
+		return self.agility / 10
+
 if __name__ == '__main__':
 	try:
 

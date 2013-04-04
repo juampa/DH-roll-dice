@@ -27,7 +27,7 @@ pjs = [
 		'name' : 'Morlok',
 		'wounds' : 13,
 		'agility' : 31,
-		'toughness' : 40,
+		'toughness' : 35,
 		'armour' : 3,
 		'armascc' : 39
 	},
@@ -62,18 +62,32 @@ def simulaCombate(pj1, pj2):
 	combate = [pj1, pj2]
 
 	# darkheresy.initiativeRoll(combate)
-
+	nohayOrdenDefinido = True
 
 	initiative1 = pj1.initiative()
 	initiative2 = pj2.initiative()
-	
-	if (initiative1 > initiative2):
-		first =  pj1
-		last =  pj2
-	else:
-		first = pj2
-		last = pj1
 
+	# TODO MEJORAR ESTO...#
+ 	while( nohayOrdenDefinido ):
+
+		# print initiative1, initiative2
+	
+		if (initiative1 > initiative2):
+			first =  pj1
+			last =  pj2
+			nohayOrdenDefinido = False
+
+		elif (initiative1 < initiative2):
+			first = pj2
+			last = pj1
+			nohayOrdenDefinido = False
+		else:
+			# Miramos las bonificaciones de bonifAgilidad.
+			first,last = sorted(combate, key=lambda x: x.bonifAgilidad)
+			if (first.bonifAgilidad() != last.bonifAgilidad()):
+				nohayOrdenDefinido = False
+		initiative1 = pj1.initiative()
+		initiative2 = pj2.initiative()
 	
 	narracion = []
 	narracion.append("Combat start: %s  VS %s" % (first.name, last.name))
