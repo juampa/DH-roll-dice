@@ -7,7 +7,7 @@ import darkheresy
 import copy
 
 ARMAS_CC = 39
-NUMREPETICIONES = 10
+NUMREPETICIONES = 500
 DEBUG = False
 
 
@@ -42,7 +42,8 @@ weapons = [
 
 	{'name' : 'sierra', 
 		'damage': '1D10+2', 
-		'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
+		'properties' : 	{ 'PENETRANTE' : 2 , 'PRIMITIVA': True, 
+						'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
 	},
 	{'name' : 'espadaEnergia', 
 		'damage': '1D10+5', 
@@ -104,7 +105,7 @@ def simulaCombate(pj1, pj2):
 			# Si no hay parada llega el danio
 			if not parry:
 
-				sufferedDamage = last.sufferDamage(location, damage)
+				sufferedDamage = last.sufferDamage(location, damage, first.weapon)
 
 				if (sufferedDamage > 0):
 					narracion.append('   El ataque ha causado {0} puntos a {1}'.format(sufferedDamage, last.name))
@@ -130,7 +131,7 @@ def simulaCombate(pj1, pj2):
 				# Si no hay parada llega el danio
 				if not parry:
 
-					sufferedDamage = first.sufferDamage(location, damage)
+					sufferedDamage = first.sufferDamage(location, damage, last.weapon)
 
 					if (sufferedDamage > 0):
 						narracion.append('   El ataque ha causado {0} puntos a {1}'.format(sufferedDamage, first.name))

@@ -12,7 +12,9 @@ class Weapon:
 		else:
 			if name in self.properties['properties']:
 				return self.properties['properties'][name]
-		return None
+			else:
+				return None #raise AttributeError("I dont have the property %s" % name)
+		#return None
 			# raise AttributeError('this weapon dont have the property %s' % name)
 
 	def parryBonus(self):
@@ -50,7 +52,6 @@ if __name__ == '__main__':
 	try:
 		w = {
 			'name' : 'sierra', 
-			'caracteristica' : 39, 
 			'damage': '1D10+2', 
 			'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
 			}

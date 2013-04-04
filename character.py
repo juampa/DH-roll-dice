@@ -11,7 +11,7 @@ class Character:
 		self.properties = properties
 
 	def __getattr__(self, name):
-
+	
 		if name in self.properties:
 			return self.properties[name]
 		else:
@@ -24,26 +24,36 @@ class Character:
 			damage =  darkheresy.weaponDamage(self)
 
 			# Devolvemos localizacion (el reverse de la tirada) y daño
-			print diceRoll
+		
 			return str(diceRoll)[::-1], damage
 		else:
-			return None
+			return None,None
 
 	def parry(self):
-		bonificador = 0 ;
-		if self.weapon.EQUILIBRADA:
-			bonificador = bonificador + 10
+		
+		bonificador = self.weapon.parryBonus()
+		
 		return darkheresy.D100() <= (self.armascc + bonificador)
 	
 
 	def initiative( self ):
 		return darkheresy.D10() + (self.agility/10)	
 
-	def sufferDamage(self, localization, damage):
+	def sufferDamage(self, localization, damage, enemyWeapon=None):
+
+		# Si el arma enemiga es penetrante hay que restar ese 
+		# valor de la armadura.
+		armour = self.armour 
+
+		if enemyWeapon is not None:
+			if enemyWeapon.PRIMITIVA:
+				armour *= 2
+			if enemyWeapon.PENETRANTE:
+				armour -= enemyWeapon.PENETRANTE 
 
 		# Descontamos armadura y bonificacion por resistencia.
 		# TODO Mirar la localizacion.
-		damage = damage - self.armour
+		damage = damage - armour
 		damage = damage - (self.toughness/10)
 
 		self.wounds = self.wounds - damage
@@ -51,7 +61,7 @@ class Character:
 		return damage
 
 	def isDead(self):
-		return self.wounds > 0
+		return self.wounds < 0
 
 	def isAlive(self):
 		return not self.isDead()
@@ -71,20 +81,22 @@ if __name__ == '__main__':
 		'armascc' : 50
 		}
 
-		weapon = {
+		weapons = {
 					'name' : 'sierra', 
 					'damage': '1D10+2', 
 					'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
 				}
 
-		w = Weapon('sierra', weapon)	
+		w = Weapon(weapons['sierra'], weapons)	
 
+		print w
+		
 		a = Character(pj['name'], w,  pj)
 
 
-		print a.name, a.weapon.damage
+		print a.weapon
 		print a.attack()
 
-		a.isAlive()
+		#a.isAlive()
 	except Exception as exception:
 		print exception
