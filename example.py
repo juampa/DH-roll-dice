@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding=UTF-8
 
 import math
@@ -9,7 +8,7 @@ import darkheresy
 import copy
 
 ARMAS_CC = 39
-NUMREPETICIONES = 1000
+NUMREPETICIONES = 10000
 DEBUG = False
 
 
@@ -32,9 +31,9 @@ pjs = [
 					'properties' : { 'EQUILIBRADA' : True  }
 				},
 		'wounds' : 13,
-		'agility' : 31,
+		'agility' : 39,
 		'toughness' : 35,
-		'armour' : 3
+		'armour' : 4
 	},
 	{
 		'name' : 'Kratos',
@@ -46,9 +45,9 @@ pjs = [
 					'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
 				},
 		'wounds' : 13,
-		'agility' : 39,
+		'agility' : 31,
 		'toughness' : 35,
-		'armour' : 4
+		'armour' : 3
 	}
 ]
 
@@ -74,6 +73,11 @@ def simulaCombate(pj1, pj2):
 
 	# Definimos la iniciativa.
 	# HAY QUE CONTROLAR EL EMPATE !!! 
+
+	combate = [pj1, pj2]
+
+	darkheresy.initiativeRolls(combate)
+
 
 	initiative1 = darkheresy.initiativeRoll(pj1)
 	initiative2 = darkheresy.initiativeRoll(pj2) 

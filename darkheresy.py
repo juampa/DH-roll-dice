@@ -1,4 +1,4 @@
-
+from weapon import Weapon
 import random
 import re
 
