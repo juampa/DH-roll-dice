@@ -10,7 +10,8 @@ class Weapon:
 		if name in self.properties:
 			return self.properties[name]
 		else:
-			raise AttributeError('this weapon dont have the property %s' % name)
+			return None
+			# raise AttributeError('this weapon dont have the property %s' % name)
 
 if __name__ == '__main__':
 

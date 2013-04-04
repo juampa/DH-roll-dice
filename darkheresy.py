@@ -42,11 +42,11 @@ def parse_input(in_string):
 
     return r, k, mod
 
-def rawRollDamage( func, weapon ):
+def rawRollDamage( func, character ):
 	tirada = func()
 	if (tirada == 10) and EXPAND:
 		extra = 0
-		while(attackRoll(weapon)):
+		while(attackRoll( character )):
 			tirada = func()
 			extra = extra + tirada
 			if (tirada != 10):
@@ -55,9 +55,9 @@ def rawRollDamage( func, weapon ):
 	return tirada
 
 
-def weaponRollDamage(weapon):
+def weaponDamage(character):
 
-	r,k,bonificador = parse_input(weapon['damage'])
+	r,k,bonificador = parse_input(character.weapon.damage)
 
 	func = None
 	if k == 10:
@@ -67,48 +67,31 @@ def weaponRollDamage(weapon):
 
 	rolls = []
 	for i in range(r):
-		rolls.append(rawRollDamage(func, weapon))
+		rolls.append(rawRollDamage(func, character))
 
+	
 	# Si el weapon es desgarradora tiro un dado mas
-	if 'properties' in weapon:
-		if 'DESGARRADORA' in weapon['properties']:
-			rolls.append(rawRollDamage(func, weapon))
-		if 'MEJORCALIDAD' in weapon['properties']:
-			bonificador = bonificador + 1
+	if character.weapon.DESGARRADORA:
+		rolls.append(rawRollDamage(func, character))
+	if character.weapon.MEJORCALIDAD:
+		bonificador = bonificador + 1
 	# Ordenamos de mayor a menor		
 	rolls.sort(reverse=True)
 
 	# Nos quedamos con las r primeras y las sumamos...
 	return sum(rolls[:r]) + bonificador
 
-def damageRoll(attacker, defender):
-	damage = weaponRollDamage(attacker['weapon'])
 
-	# Descontamos armadura y bonificacion por resistencia.
-	damage = damage - defender['armour']
-	damage = damage - (defender['toughness']/10)
-
-	result = damage if damage >= 0 else 0
-	return result 
-
-def parryRoll( weapon ):
+def attackRoll( character ):
 	bonificador = 0 ;
-	if 'properties' in weapon:
-		if 'EQUILIBRADA' in weapon['properties']:
-			bonificador = bonificador + 10
-	return D100() <= (weapon['caracteristica'] + bonificador)
+	
+	if character.weapon.MEJORCALIDAD:
+		bonificador = bonificador + 10
+	if character.weapon.DEFENSIVA:
+		bonificador = bonificador - 10
 
-def initiativeRoll( player ):
-	return D10() + (player['agility']/10)
-
-def attackRoll( weapon ):
-	bonificador = 0 ;
-	if 'properties' in weapon:
-		if 'MEJORCALIDAD' in weapon['properties']:
-			bonificador = bonificador + 10
-		if 'DEFENSIVA' in weapon['properties']:
-			bonificador = bonificador - 10
-	return D100() <= (weapon['caracteristica'] + bonificador)
+	result = D100() 
+	return result if (result <= (character.armascc + bonificador)) else None
 
 
 
