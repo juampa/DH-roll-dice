@@ -73,8 +73,10 @@ def weaponDamage(character):
 	# Si el weapon es desgarradora tiro un dado mas
 	if character.weapon.DESGARRADORA:
 		rolls.append(rawRollDamage(func, character))
-	if character.weapon.MEJORCALIDAD:
-		bonificador = bonificador + 1
+	
+	# Algunas armas tienen bonificadores al danio.
+	bonificador += character.weapon.damageBonus()
+	
 	# Ordenamos de mayor a menor		
 	rolls.sort(reverse=True)
 
@@ -83,14 +85,12 @@ def weaponDamage(character):
 
 
 def attackRoll( character ):
-	bonificador = 0 ;
 	
-	if character.weapon.MEJORCALIDAD:
-		bonificador = bonificador + 10
-	if character.weapon.DEFENSIVA:
-		bonificador = bonificador - 10
-
+	# En funcion del arma 
+	bonificador = character.weapon.attackBonus()
+	
 	result = D100() 
+
 	return result if (result <= (character.armascc + bonificador)) else None
 
 

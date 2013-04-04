@@ -1,8 +1,5 @@
 # coding=UTF-8
 
-import math
-from numpy import array
-from numpy import nonzero
 from random import randrange
 from weapon import Weapon
 from character import Character
@@ -10,7 +7,7 @@ import darkheresy
 import copy
 
 ARMAS_CC = 39
-NUMREPETICIONES = 10000
+NUMREPETICIONES = 10
 DEBUG = False
 
 
@@ -155,31 +152,6 @@ def simulaCombate(pj1, pj2):
 	return ganador
 
 
-
-def simulaArmas():
-
-	print "TOTAL PRUEBAS: ",  NUMREPETICIONES
-
-	result = {}
-	for armaItem in testArmas:
-		arma = Weapon(armaItem['name'], armaItem)
-		tiradas = []
-		for i in range(NUMREPETICIONES):
-			if darkheresy.attackRoll(arma):
-				tiradas.append(darkheresy.weaponRollDamage(arma))
-			else:
-				tiradas.append(0)
-		a = array(tiradas)
-		print ""
-		print arma.name," ataques acertados: ", len(a[nonzero(a)])
-		print "Ataque min/max : " , a.min() , "/", a.max()
-		print "Ataque medio (sin ataques nulos) / total: " , round(a[nonzero(a)].mean(),2), "/" , a.mean() 
-		print "Ataque desviacion : ", round(a.std(),3)
-		result[arma.name] = tiradas
-		if DEBUG:
-			print tiradas
-	print result 
-
 def main():
 	tiradas = []
 
@@ -198,4 +170,3 @@ def main():
 
 if  __name__ =='__main__':
 	main()
-	#simulaArmas()

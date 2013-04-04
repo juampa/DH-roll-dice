@@ -10,8 +10,40 @@ class Weapon:
 		if name in self.properties:
 			return self.properties[name]
 		else:
-			return None
+			if name in self.properties['properties']:
+				return self.properties['properties'][name]
+		return None
 			# raise AttributeError('this weapon dont have the property %s' % name)
+
+	def parryBonus(self):
+		bonificador = 0 
+		
+		if self.EQUILIBRADA:
+			bonificador += 10
+		
+		if self.DEFENSIVA:
+			bonificador += 15
+		
+		return bonificador
+
+	def attackBonus(self):
+
+		bonificador = 0 ;
+
+		if self.MEJORCALIDAD:
+			bonificador += 10
+		if self.DEFENSIVA:
+			bonificador -= 10
+
+		return bonificador
+
+	def damageBonus(self):
+
+		bonificador = 0 
+		if self.MEJORCALIDAD:
+			bonificador += 1
+		return bonificador
+
 
 if __name__ == '__main__':
 
@@ -25,6 +57,6 @@ if __name__ == '__main__':
 
 		weapon = Weapon(w['name'], w)
 
-		print weapon.name, weapon.damage
+		print weapon.name, weapon.parryBonus(), weapon.attackBonus()
 	except Exception as exception:
 		print exception
