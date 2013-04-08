@@ -1,6 +1,6 @@
 class ArmorPiece:
 
-	def __init__(self, name, type, protection, weight, localizations, properties={}):
+	def __init__(self, name, type, protection, weight, localizations, properties=[]):
 		self.name = name
 		self.type = type
 		self.protection = protection
@@ -9,12 +9,7 @@ class ArmorPiece:
 		self.properties = properties
 
 	def __getattr__(self, name):
-		if name in self.properties:
-			return self.properties[name]
-		else:
-			return None #raise AttributeError("I dont have the property %s" % name)
-		#return None
-			# raise AttributeError('this weapon dont have the property %s' % name)
+		return name in self.properties
 
 	def armourBonus(self):
 		bonificador = self.protection

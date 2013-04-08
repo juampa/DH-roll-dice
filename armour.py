@@ -30,9 +30,9 @@ class Armour:
 		matches = [x for x in self.pieces if locName in x.localizations]
 		
 		if matches:
-			totalProperties = {}
+			totalProperties = []
 			for item in matches:
-				totalProperties.update(item.properties)
+				totalProperties.append(item.properties) 
 
 		# If two pieces covers the same loc only the highest protecion
 		# is returned.
@@ -40,6 +40,16 @@ class Armour:
 		else:
 			return 0, {}
 
+	""" 
+		If any piece of armour is bad quality
+		a -10 is return
+	"""
+	def agilityBonus(self):
+		bonificador = 0
+		for item in self.pieces:
+			if item.MALACALIDAD:
+				bonificador = -10 
+		return bonificador
 		
 if __name__ == '__main__':
 

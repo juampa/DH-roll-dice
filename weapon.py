@@ -1,21 +1,25 @@
 # coding=UTF-8
 class Weapon:
 
-	def __init__(self, name, properties={}):
+	"""
+	name : nombre del arma
+	damage: danio del arma (incluye bonificacion por fuerza.
+	penetration : >= 0
+	properties: cualidades extra del arma.
+
+	"""
+	def __init__(self, name, damage, penetration, properties=[]):
 		
 		self.name = name
+		self.damage = damage
+		self.penetration = penetration
 		self.properties = properties
 
+	""" 
+		return true / false if the weapon has the property.
+	"""
 	def __getattr__(self, name):
-		if name in self.properties:
-			return self.properties[name]
-		else:
-			if name in self.properties['properties']:
-				return self.properties['properties'][name]
-			else:
-				return None #raise AttributeError("I dont have the property %s" % name)
-		#return None
-			# raise AttributeError('this weapon dont have the property %s' % name)
+		return name in self.properties
 
 	def parryBonus(self):
 		bonificador = 0 
@@ -51,12 +55,12 @@ if __name__ == '__main__':
 
 	try:
 		w = {
-			'name' : 'sierra', 
-			'damage': '1D10+2', 
-			'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
+			'name' : 'espadaEnergia', 
+			'damage': '1D10+5', 
+			'properties' : [ 'EQUILIBRADA' ] 
 			}
 
-		weapon = Weapon(w['name'], w)
+		weapon = Weapon(w['name'], '1D10+2', 0,  w['properties'])
 
 		print weapon.name, weapon.parryBonus(), weapon.attackBonus()
 	except Exception as exception:

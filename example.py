@@ -6,56 +6,17 @@ from character import Character
 from armorPiece import ArmorPiece
 from armour import Armour
 import darkheresy
-import copy
 
-ARMAS_CC = 39
+
 NUMREPETICIONES = 500
 DEBUG = False
 
 
-"""
-	name : nombre del arma
-	caracteristica : asociada al arma, cuerpo a cuerpo o armas a distancia.
-	damage: danio del arma (incluye bonificacion por fuerza.
-	properties: cualidades extra del arma.
-
-"""
-
-pjs = [
-	{
-		'name' : 'Morlok',
-		'wounds' : 13,
-		'agility' : 31,
-		'toughness' : 35,
-		'armascc' : 39
-	},
-	{
-		'name' : 'Kratos',
-		'wounds' : 13,
-		'agility' : 31,
-		'toughness' : 35,
-		'armascc' : 39
-	}
-]
-
-weapons = [
-
-	{'name' : 'sierra', 
-		'damage': '1D10+2', 
-		'properties' : 	{ 'PENETRANTE' : 2 ,'DESGARRADORA' : True, 'EQUILIBRADA' : True,'MEJORCALIDAD' : True  } 
-	},
-	{'name' : 'espadaEnergia', 
-		'damage': '1D10+5', 
-		'properties' : { 'PENETRANTE' : 6, 'EQUILIBRADA' : True  } 
-	}
-]
 
 def simulaCombate(pj1, pj2):
 	# De momento un simple intercambio de golpes rebajando la hasta llegar a 0...
 
 	# Definimos la iniciativa.
-	# HAY QUE CONTROLAR EL EMPATE !!! 
-
 	combate = [pj1, pj2]
 
 	# darkheresy.initiativeRoll(combate)
@@ -153,22 +114,39 @@ def simulaCombate(pj1, pj2):
 	return ganador
 
 
+pjs = [
+	{
+		'wounds' : 13,
+		'agility' : 31,
+		'toughness' : 35,
+		'armascc' : 39
+	},
+	{
+		'wounds' : 13,
+		'agility' : 31,
+		'toughness' : 35,
+		'armascc' : 39
+	}
+]
+
+
+
 def main():
 	tiradas = []
 
-	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs", { 'PRIMITIVA' : True})
-	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest", { 'PRIMITIVA' : True})
+	piece1 = ArmorPiece("caparazonArbites", "caparazon", 5, 15, "arms,chest,legs", [ ])
+	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "arms,chest,legs", [ 'PRIMITIVA' ])
 
-
-	armour = Armour([piece1, piece2])
+	armour1 = Armour([piece1])
+	armour2 = Armour([piece2])
 	
-	weapon0 = Weapon(weapons[0]['name'], weapons[0])
-	weapon1 = Weapon(weapons[1]['name'], weapons[1])
+	weapon0 = Weapon('sierra', '1D10+2', 2, [ 'DESGARRADORA', 'EQUILIBRADA' ] )
+	weapon1 = Weapon('espadaEnergia', '1D10+5', 6, [ 'EQUILIBRADA' ] )
 
 	for i in range(NUMREPETICIONES):
 
-		pj0 = Character(pjs[0]['name'], weapon0, armour, pjs[0])
-		pj1 = Character(pjs[1]['name'], weapon1, armour, pjs[1])
+		pj0 = Character('Morlok', weapon0, armour1, pjs[0])
+		pj1 = Character('Kratos', weapon1, armour2, pjs[1])
 
 		tiradas.append(simulaCombate(pj0, pj1))
 

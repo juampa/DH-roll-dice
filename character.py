@@ -73,7 +73,7 @@ class Character:
 		return not self.isDead()
 
 	def bonifAgilidad(self):
-		return self.agility / 10
+		return (self.agility - self.armour.agilityBonus()) / 10
 
 if __name__ == '__main__':
 	try:
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 		weapons = {
 					'name' : 'sierra', 
 					'damage': '1D10+2', 
-					'properties' : 	{ 'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
+					'properties' : 	[ 'DESGARRADORA' , 'EQUILIBRADA', 'MEJORCALIDAD' ]
 				}
 
 		w = Weapon(weapons['sierra'], weapons)	
