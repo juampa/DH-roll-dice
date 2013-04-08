@@ -1,13 +1,15 @@
 # coding=UTF-8
 
 from weapon import Weapon
+from armour import Armour
 import darkheresy
 
 class Character:
 
-	def __init__(self, name, weapon, properties={}):
+	def __init__(self, name, weapon, armour, properties={}):
 		self.name = name
 		self.weapon = weapon
+		self.armour = armour
 		self.properties = properties
 
 	def __getattr__(self, name):
@@ -43,13 +45,17 @@ class Character:
 
 		# Si el arma enemiga es penetrante hay que restar ese 
 		# valor de la armadura.
-		armour = self.armour 
+		armour, props = self.armour.protectionByLoc(localization) 
 
 		if enemyWeapon is not None:
-			if enemyWeapon.PRIMITIVA:
+			if enemyWeapon.PRIMITIVA and not 'PRIMITIVA' in props:
 				armour *= 2
+			if  'PRIMITIVA' in props and not enemyWeapon.PRIMITIVA:
+				armour /= 2
 			if enemyWeapon.PENETRANTE:
 				armour -= enemyWeapon.PENETRANTE 
+
+		armour = 0 if armour < 0 else armour
 
 		# Descontamos armadura y bonificacion por resistencia.
 		# TODO Mirar la localizacion.
@@ -77,7 +83,6 @@ if __name__ == '__main__':
 		'wounds' : 13,
 		'agility' : 31,
 		'toughness' : 35,
-		'armour' : 3,
 		'armascc' : 50
 		}
 
@@ -89,9 +94,15 @@ if __name__ == '__main__':
 
 		w = Weapon(weapons['sierra'], weapons)	
 
+
+		piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs")
+		piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest")
+		piece3 = ArmorPiece("armadura de placas feudal", "primitivo", 5, 22, "head,arms,chest,legs")
+
+		armour = Armour([piece1, piece2, piece3])
 		print w
 		
-		a = Character(pj['name'], w,  pj)
+		a = Character(pj['name'], w, armour,  pj)
 
 
 		print a.weapon

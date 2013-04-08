@@ -3,6 +3,8 @@
 from random import randrange
 from weapon import Weapon
 from character import Character
+from armorPiece import ArmorPiece
+from armour import Armour
 import darkheresy
 import copy
 
@@ -25,7 +27,6 @@ pjs = [
 		'wounds' : 13,
 		'agility' : 31,
 		'toughness' : 35,
-		'armour' : 3,
 		'armascc' : 39
 	},
 	{
@@ -33,7 +34,6 @@ pjs = [
 		'wounds' : 13,
 		'agility' : 31,
 		'toughness' : 35,
-		'armour' : 3,
 		'armascc' : 39
 	}
 ]
@@ -42,12 +42,11 @@ weapons = [
 
 	{'name' : 'sierra', 
 		'damage': '1D10+2', 
-		'properties' : 	{ 'PENETRANTE' : 2 , 'PRIMITIVA': True, 
-						'DESGARRADORA' : True, 'EQUILIBRADA' : True  , 'MEJORCALIDAD' : True } 
+		'properties' : 	{ 'PENETRANTE' : 2 ,'DESGARRADORA' : True, 'EQUILIBRADA' : True,'MEJORCALIDAD' : True  } 
 	},
 	{'name' : 'espadaEnergia', 
 		'damage': '1D10+5', 
-		'properties' : { 'EQUILIBRADA' : True  } 
+		'properties' : { 'PENETRANTE' : 6, 'EQUILIBRADA' : True  } 
 	}
 ]
 
@@ -90,6 +89,7 @@ def simulaCombate(pj1, pj2):
 	narracion = []
 	narracion.append("Combat start: %s  VS %s" % (first.name, last.name))
 	
+	#print "Combat start: %s  VS %s" % (first.name, last.name)
 	rounds = 0
 	while( first.isAlive() and last.isAlive() and rounds < 100):
 		
@@ -156,13 +156,19 @@ def simulaCombate(pj1, pj2):
 def main():
 	tiradas = []
 
+	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs", { 'PRIMITIVA' : True})
+	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest", { 'PRIMITIVA' : True})
+
+
+	armour = Armour([piece1, piece2])
+	
 	weapon0 = Weapon(weapons[0]['name'], weapons[0])
 	weapon1 = Weapon(weapons[1]['name'], weapons[1])
 
 	for i in range(NUMREPETICIONES):
 
-		pj0 = Character(pjs[0]['name'], weapon0, pjs[0])
-		pj1 = Character(pjs[1]['name'], weapon1, pjs[1])
+		pj0 = Character(pjs[0]['name'], weapon0, armour, pjs[0])
+		pj1 = Character(pjs[1]['name'], weapon1, armour, pjs[1])
 
 		tiradas.append(simulaCombate(pj0, pj1))
 
