@@ -2,7 +2,9 @@
 
 from weapon import Weapon
 from armour import Armour
+from armorPiece import ArmorPiece
 import darkheresy
+import logging
 
 class Character:
 
@@ -25,17 +27,34 @@ class Character:
 		if diceRoll:
 			damage =  darkheresy.weaponDamage(self)
 
+			# sumamos la bonificacion de fuerza del personaje
+			damage += (self.strength / 10)
+			
 			# Devolvemos localizacion (el reverse de la tirada) y daño
-		
-			return str(diceRoll)[::-1], damage
+			if diceRoll >= 10:
+				location = str(diceRoll)[::-1]
+			else:
+				location = ('0' + str(diceRoll))[::-1]
+
+			locationName = darkheresy.location(int(location))
+			
+			logging.debug("%s impacta en %s y puede causar %d puntos de daño " % (self.name, locationName, damage))
+
+			return location, damage
 		else:
+			logging.debug("%s falla el ataque" % (self.name))
 			return None,None
 
 	def parry(self):
 		
 		bonificador = self.weapon.parryBonus()
 		
-		return darkheresy.D100() <= (self.armascc + bonificador)
+		if darkheresy.D100() <= (self.armascc + bonificador):
+			logging.debug('%s para el ataque' % self.name)
+			return True
+		else:
+			logging.debug('%s no consigue parar el ataque' % self.name)
+			return False
 	
 
 	def initiative( self ):
@@ -52,19 +71,24 @@ class Character:
 				armour *= 2
 			if  'PRIMITIVA' in props and not enemyWeapon.PRIMITIVA:
 				armour /= 2
-			if enemyWeapon.PENETRANTE:
-				armour -= enemyWeapon.PENETRANTE 
+			armour -= enemyWeapon.penetration 
 
 		armour = 0 if armour < 0 else armour
 
+		increase_armour = armour + (self.toughness/10)
 		# Descontamos armadura y bonificacion por resistencia.
 		# TODO Mirar la localizacion.
-		damage = damage - armour
-		damage = damage - (self.toughness/10)
+		sufferedDamage = damage - increase_armour
 
-		self.wounds = self.wounds - damage
+		if sufferedDamage > 0:
+			self.wounds = self.wounds - sufferedDamage
+			logging.debug("%s sufre %d puntos tras absorver %d" % (self.name, sufferedDamage, increase_armour))
+			logging.debug("%s su salud es ahora %d" % (self.name, self.wounds))
+		else:
+			logging.debug("%s ha absorvido todo el daño del ataque" % self.name)
+		
 
-		return damage
+		return sufferedDamage
 
 	def isDead(self):
 		return self.wounds < 0
@@ -76,38 +100,34 @@ class Character:
 		return (self.agility - self.armour.agilityBonus()) / 10
 
 if __name__ == '__main__':
-	try:
 
-		pj = {
+	pj = {
 		'name' : 'Kratos',
 		'wounds' : 13,
 		'agility' : 31,
 		'toughness' : 35,
+		'strength' : 31,
 		'armascc' : 50
 		}
 
-		weapons = {
-					'name' : 'sierra', 
-					'damage': '1D10+2', 
-					'properties' : 	[ 'DESGARRADORA' , 'EQUILIBRADA', 'MEJORCALIDAD' ]
-				}
+	w = {
+			'name' : 'espadaEnergia', 
+			'damage': '1D10+5', 
+			'properties' : [ 'EQUILIBRADA' ] 
+			}
 
-		w = Weapon(weapons['sierra'], weapons)	
+	wp = Weapon(w['name'], '1D10+2', 0,  w['properties'])
 
 
-		piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs")
-		piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest")
-		piece3 = ArmorPiece("armadura de placas feudal", "primitivo", 5, 22, "head,arms,chest,legs")
+	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs")
+	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest")
+	piece3 = ArmorPiece("armadura de placas feudal", "primitivo", 5, 22, "head,arms,chest,legs")
 
-		armour = Armour([piece1, piece2, piece3])
-		print w
+	armour = Armour([piece1, piece2, piece3])
 		
-		a = Character(pj['name'], w, armour,  pj)
+		
+	a = Character(pj['name'], wp, armour,  pj)
 
+	print a.weapon
 
-		print a.weapon
-		print a.attack()
-
-		#a.isAlive()
-	except Exception as exception:
-		print exception
+	

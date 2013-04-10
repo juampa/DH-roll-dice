@@ -1,6 +1,8 @@
+# coding=UTF-8
 from weapon import Weapon
 import random
 import re
+import logging
 
 random.seed()
 
@@ -83,6 +85,25 @@ def weaponDamage(character):
 	# Nos quedamos con las r primeras y las sumamos...
 	return sum(rolls[:r]) + bonificador
 
+def location(n=45):
+
+	# pongo el 45 pq especifica que los ataques
+	# q no digan nada van al pecho.
+
+	locName = 'DESCONOCIDO'
+	if n > 0 and n < 11:
+		locName = 'head'
+	elif n > 10 and n < 21:
+		locName = 'arms'
+	elif n > 20 and n < 31:
+		locName = 'arms'
+	elif n > 30 and n < 71:
+		locName = 'chest'
+	elif n > 70 and n < 86:
+		locName = 'legs'
+	elif n > 85 and n < 101:
+		locName = 'legs'
+	return locName
 
 def attackRoll( character ):
 	
@@ -92,6 +113,71 @@ def attackRoll( character ):
 	result = D100() 
 
 	return result if (result <= (character.armascc + bonificador)) else None
+
+def simulaCombate(pj1, pj2):
+	# De momento un simple intercambio de golpes rebajando la hasta llegar a 0...
+
+	# Definimos la iniciativa.
+	combate = [pj1, pj2]
+
+	# darkheresy.initiativeRoll(combate)
+	nohayOrdenDefinido = True
+
+	initiative1 = pj1.initiative()
+	initiative2 = pj2.initiative()
+
+	# TODO MEJORAR ESTO...#
+ 	while( nohayOrdenDefinido ):
+
+		# print initiative1, initiative2
+	
+		if (initiative1 > initiative2):
+			first =  pj1
+			last =  pj2
+			nohayOrdenDefinido = False
+
+		elif (initiative1 < initiative2):
+			first = pj2
+			last = pj1
+			nohayOrdenDefinido = False
+		else:
+			# Miramos las bonificaciones de bonifAgilidad.
+			first,last = sorted(combate, key=lambda x: x.bonifAgilidad)
+			if (first.bonifAgilidad() != last.bonifAgilidad()):
+				nohayOrdenDefinido = False
+		initiative1 = pj1.initiative()
+		initiative2 = pj2.initiative()
+	
+	logging.debug("Combat start: %s  VS %s" % (first.name, last.name))
+	
+	#print "Combat start: %s  VS %s" % (first.name, last.name)
+	rounds = 0
+	while( first.isAlive() and last.isAlive() and rounds < 100):
+		
+		logging.debug("Turno: %d" % rounds)
+		# Ataque 
+		location, damage = first.attack()
+
+		# si hay localizacion y last no para hay un ataque exitoso.
+		if location and not last.parry():
+			last.sufferDamage(location, damage, first.weapon)
+		
+		# Si el 1 sigue en pie seguimos...
+		if (last.isAlive() > 0):
+			
+			# Ataque
+			location, damage = last.attack()  
+			
+			if location and not first.parry():
+
+				sufferedDamage = first.sufferDamage(location, damage, last.weapon)
+	
+		rounds = rounds + 1
+	
+	ganador = sorted([first,last], key=lambda k: k.wounds)[1].name
+	# print 'Fin del combate: GANADOR', ganador
+
+	return ganador
 
 
 

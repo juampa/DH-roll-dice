@@ -28,7 +28,12 @@ class ArmorPiece:
 			bonificador -= 10 
 		return bonificador
 
+	def __str__(self):
+		return "%s %s %d" % (self.name, self.type, self.protection)
 
+	def __repr__(self):
+		return self.__str__()
+		
 if __name__ == '__main__':
 	
 	piece = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "brazos,cuerpo,piernas")

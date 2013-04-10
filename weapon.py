@@ -8,7 +8,7 @@ class Weapon:
 	properties: cualidades extra del arma.
 
 	"""
-	def __init__(self, name, damage, penetration, properties=[]):
+	def __init__(self, name, damage, penetration=0, properties=[]):
 		
 		self.name = name
 		self.damage = damage
@@ -50,6 +50,8 @@ class Weapon:
 			bonificador += 1
 		return bonificador
 
+	def __str__(self):
+		return "%s %s" % (self.name, self.damage)
 
 if __name__ == '__main__':
 
@@ -61,6 +63,7 @@ if __name__ == '__main__':
 			}
 
 		weapon = Weapon(w['name'], '1D10+2', 0,  w['properties'])
+
 
 		print weapon.name, weapon.parryBonus(), weapon.attackBonus()
 	except Exception as exception:
