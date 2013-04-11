@@ -1,6 +1,6 @@
 # coding=UTF-8
 import logging
-from copy import deepcopy
+import argparse
 from random import randrange
 from weapon import Weapon
 from character import Character
@@ -33,7 +33,12 @@ def main(file1, file2, repeticiones=1):
 
 if  __name__ =='__main__':
 
-	file1 = 'examples/character1.yaml'
-	file2 = 'examples/character2.yaml'
+	parser = argparse.ArgumentParser()
+	
+	parser.add_argument('player1', type=file)
+	parser.add_argument('player2', type=file)
+	parser.add_argument('reps', type=int)
 
-	main(file1, file2, 1000)
+	args = parser.parse_args()
+
+	main(args.player1, args.player2, args.reps)

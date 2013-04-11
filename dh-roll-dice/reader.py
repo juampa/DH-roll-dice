@@ -26,9 +26,7 @@ def characterParser(yamlcharacter):
 def parseFile(file):
 
 	try:
-		f = open(file)
-		characterYaml = yaml.load(f)['character']
-		f.close()
+		characterYaml = yaml.load(file)['character']
 
 		if characterYaml:
 			# Weapon parser
