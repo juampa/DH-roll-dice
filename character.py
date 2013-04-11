@@ -6,6 +6,7 @@ from armorPiece import ArmorPiece
 import darkheresy
 import logging
 
+
 class Character:
 
 	def __init__(self, name, weapon, armour, properties={}):
@@ -13,6 +14,7 @@ class Character:
 		self.weapon = weapon
 		self.armour = armour
 		self.properties = properties
+		self.actualWounds = properties['wounds']
 
 	def __getattr__(self, name):
 	
@@ -81,9 +83,9 @@ class Character:
 		sufferedDamage = damage - increase_armour
 
 		if sufferedDamage > 0:
-			self.wounds = self.wounds - sufferedDamage
+			self.actualWounds = self.actualWounds - sufferedDamage
 			logging.debug("%s sufre %d puntos tras absorver %d" % (self.name, sufferedDamage, increase_armour))
-			logging.debug("%s su salud es ahora %d" % (self.name, self.wounds))
+			logging.debug("%s su salud es ahora %d" % (self.name, self.actualWounds))
 		else:
 			logging.debug("%s ha absorvido todo el daño del ataque" % self.name)
 		
@@ -91,13 +93,22 @@ class Character:
 		return sufferedDamage
 
 	def isDead(self):
-		return self.wounds < 0
+		return self.actualWounds < 0
 
 	def isAlive(self):
 		return not self.isDead()
 
 	def bonifAgilidad(self):
 		return (self.agility - self.armour.agilityBonus()) / 10
+
+	def reset(self):
+		self.actualWounds = self.properties['wounds']
+
+	def __str__(self):
+		return "%s %s %s %s" % (self.name, self.wounds, self.armour, self.weapon)
+
+	def __repr__(self):
+		return self.__str__()
 
 if __name__ == '__main__':
 

@@ -1,8 +1,8 @@
 class ArmorPiece:
 
-	def __init__(self, name, type, protection, weight, localizations, properties=[]):
+	def __init__(self, name, category, protection, weight, localizations, properties=[]):
 		self.name = name
-		self.type = type
+		self.category = category
 		self.protection = protection
 		self.weight = weight
 		self.localizations = localizations.split(",")
@@ -29,7 +29,7 @@ class ArmorPiece:
 		return bonificador
 
 	def __str__(self):
-		return "%s %s %d" % (self.name, self.type, self.protection)
+		return "%s %s %d" % (self.name, self.category, self.protection)
 
 	def __repr__(self):
 		return self.__str__()

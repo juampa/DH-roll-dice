@@ -38,7 +38,13 @@ class Armour:
 			if item.MALACALIDAD:
 				bonificador = -10 
 		return bonificador
-		
+	
+	def __str__(self):
+		return "Armadura: %s" % (self.pieces)
+
+	def __repr__(self):
+		return self.__str__()
+
 if __name__ == '__main__':
 
 	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs", [ 'PRIMITIVA' ])
@@ -47,6 +53,6 @@ if __name__ == '__main__':
 
 	armour = Armour([piece1, piece2, piece3])
 
-	print armour.protectionByLoc('7')
+	print armour
 
 	

@@ -163,7 +163,7 @@ def simulaCombate(pj1, pj2):
 			last.sufferDamage(location, damage, first.weapon)
 		
 		# Si el 1 sigue en pie seguimos...
-		if (last.isAlive() > 0):
+		if last.isAlive():
 			
 			# Ataque
 			location, damage = last.attack()  
@@ -174,7 +174,7 @@ def simulaCombate(pj1, pj2):
 	
 		rounds = rounds + 1
 	
-	ganador = sorted([first,last], key=lambda k: k.wounds)[1].name
+	ganador = sorted([first,last], key=lambda k: k.actualWounds)[1].name
 	# print 'Fin del combate: GANADOR', ganador
 
 	return ganador

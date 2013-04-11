@@ -10,7 +10,7 @@ Python Methods to rolling dice and combat simulation on DarkHeresy Rolgame. Key 
 
 TODO LIST:
 - [ ] JSON definition of characters
-- [ ] Player Strength bonus outside the weapon definition.
+- [X] Player Strength bonus outside the weapon definition.
 - [ ] Range weapons support.
 
 Basic Usage
