@@ -26,6 +26,9 @@ class Weapon:
 		
 		if self.EQUILIBRADA:
 			bonificador += 10
+
+		if self.DESEQUILIBRADA:
+			bonificador -= 10
 		
 		if self.DEFENSIVA:
 			bonificador += 15

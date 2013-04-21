@@ -1,0 +1,31 @@
+# character format
+# YAML
+character:
+  personal:
+    name: 'Litila'
+    wounds: 11
+    agility : 33
+    toughness : 33
+    strength : 45
+    armascc : 34
+
+  weapon:
+    name: 'hacha'
+    damage: '1D10+1'
+    penetration: 0
+    properties:
+      - DESEQUILIBRADA
+      - PRIMITIVA
+
+  armor:
+    - name: 'armaduradepotencia'
+      category: 'servoarmadura'
+      protection: 7
+      weight: 35
+      locations: 'arms,legs'
+
+    - name: 'armaduradepotencia'
+      category: 'servoarmadura'
+      protection: 8
+      weight: 35
+      locations: 'chest'

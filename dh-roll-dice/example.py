@@ -9,8 +9,7 @@ from armour import Armour
 import darkheresy
 import reader
 
-
-def main(file1, file2, repeticiones=1):
+def simula(file1, file2, repeticiones=1):
 
 	#Logging config.
 	level = logging.DEBUG if repeticiones == 1 else logging.INFO
@@ -31,14 +30,14 @@ def main(file1, file2, repeticiones=1):
 		logging.info( "Combates ganados por : %s -> %d" % ( name , resultado.count(name)))
 	
 
-if  __name__ =='__main__':
-
+if __name__ == "__main__":
+    
 	parser = argparse.ArgumentParser()
-	
+
 	parser.add_argument('player1', type=file)
 	parser.add_argument('player2', type=file)
 	parser.add_argument('reps', type=int)
 
 	args = parser.parse_args()
 
-	main(args.player1, args.player2, args.reps)
+	simula(args.player1, args.player2, args.reps)
