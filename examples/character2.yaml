@@ -7,7 +7,7 @@ character:
     agility : 31
     toughness : 35
     strength : 31
-    armascc : 39
+    ballisticskill : 39
 
   weapon:
     name: 'espadaEnergia'

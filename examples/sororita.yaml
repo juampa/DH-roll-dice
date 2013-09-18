@@ -3,19 +3,19 @@
 character:
   personal:
     name: 'Litila'
-    wounds: 11
-    agility : 33
-    toughness : 33
-    strength : 45
-    armascc : 34
+    wounds: 13
+    agility : 31
+    toughness : 35
+    strength : 31
+    ballisticskill : 39
 
   weapon:
-    name: 'hacha'
-    damage: '1D10+1'
-    penetration: 0
+    name: 'sierra'
+    damage: '1D10+2'
+    penetration: 2
     properties:
-      - DESEQUILIBRADA
-      - PRIMITIVA
+      - DESGARRADORA
+      - EQUILIBRADA
 
   armor:
     - name: 'armaduradepotencia'

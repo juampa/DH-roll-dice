@@ -15,7 +15,7 @@ def armorParser(yamlarmourPieces):
 	pieces = []
 	for piece in yamlarmourPieces:
 		pieces.append(
-			ArmorPiece(piece['name'], piece['category'], piece['protection'], piece['weight'], "brazos,cuerpo,piernas"))
+			ArmorPiece(piece['name'], piece['category'], piece['protection'], piece['weight'], piece['locations']))
 
 	return Armour(pieces)
 

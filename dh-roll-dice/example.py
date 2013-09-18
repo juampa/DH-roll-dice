@@ -22,7 +22,7 @@ def simula(file1, file2, repeticiones=1):
 
 	for i in range(repeticiones):
 
-		resultado.append(darkheresy.simulaCombate(pj0, pj1))
+		resultado.append(darkheresy.simulaRangeCombat(pj0, pj1))
 		pj0.reset()
 		pj1.reset()
 

@@ -46,6 +46,30 @@ class Weapon:
 
 		return bonificador
 
+	def distanceBonus(distance):
+
+		alcance = self.ALCANCE 
+
+		if alcance:
+			if distance <= 3:
+				# Corto
+				return 30
+
+			if distance < (alcance / 2):
+				# Corto
+				return 10
+			if distance > (alcance * 2) and distance < (alcance * 3):
+				# Largo alcance
+				return -10
+			if distance > (alcance * 3) and distance < (alcance * 4):
+				# Extremo alcance
+				return -30
+			if distance > (alcance * 4):
+				# Maximo alcance (fallo automatico)
+				return -100
+
+		return 0 
+
 	def damageBonus(self):
 
 		bonificador = 0 

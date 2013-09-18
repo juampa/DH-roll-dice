@@ -1,5 +1,4 @@
 # coding=UTF-8
-from weapon import Weapon
 import random
 import re
 import logging
@@ -85,39 +84,25 @@ def weaponDamage(character):
 	# Nos quedamos con las r primeras y las sumamos...
 	return sum(rolls[:r]) + bonificador
 
-def location(n=45):
 
-	# pongo el 45 pq especifica que los ataques
-	# q no digan nada van al pecho.
-
-	locName = 'DESCONOCIDO'
-	if n > 0 and n < 11:
-		locName = 'head'
-	elif n > 10 and n < 21:
-		locName = 'arms'
-	elif n > 20 and n < 31:
-		locName = 'arms'
-	elif n > 30 and n < 71:
-		locName = 'chest'
-	elif n > 70 and n < 86:
-		locName = 'legs'
-	elif n > 85 and n < 101:
-		locName = 'legs'
-	return locName
-
-def attackRoll( character ):
+def attackRoll( character, distance=-1 ):
 	
 	# En funcion del arma 
 	bonificador = character.weapon.attackBonus()
-	
+
+	# Calculamos el bonificador por distancia
+	# si es necesario.
+	if distance >= 0:
+		bonificador += character.weapon.distanceBonus(distance)
+
+
 	result = D100() 
 
-	return result if (result <= (character.armascc + bonificador)) else None
+	return result if (result <= (character.ballisticskill + bonificador)) else None
 
-def simulaCombate(pj1, pj2):
-	# De momento un simple intercambio de golpes rebajando la hasta llegar a 0...
 
-	# Definimos la iniciativa.
+def defineInitiative(pj1, pj2) :
+
 	combate = [pj1, pj2]
 
 	# darkheresy.initiativeRoll(combate)
@@ -142,11 +127,20 @@ def simulaCombate(pj1, pj2):
 			nohayOrdenDefinido = False
 		else:
 			# Miramos las bonificaciones de bonifAgilidad.
-			first,last = sorted(combate, key=lambda x: x.bonifAgilidad)
+			first, last = sorted(combate, key=lambda x: x.bonifAgilidad)
 			if (first.bonifAgilidad() != last.bonifAgilidad()):
 				nohayOrdenDefinido = False
 		initiative1 = pj1.initiative()
 		initiative2 = pj2.initiative()
+
+	return first, last
+
+
+
+def simulaRangeCombat(pj1, pj2, props={}):
+	
+	# Definimos la iniciativa.
+	first, last = defineInitiative(pj1, pj2)
 	
 	logging.debug("Combat start: %s  VS %s" % (first.name, last.name))
 	
@@ -178,9 +172,3 @@ def simulaCombate(pj1, pj2):
 	# print 'Fin del combate: GANADOR', ganador
 
 	return ganador
-
-
-
-if __name__ == "__main__":
-	pattern = '3D10-5'
-	print pattern, "->", parse_input(pattern)

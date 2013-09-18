@@ -34,8 +34,3 @@ class ArmorPiece:
 	def __repr__(self):
 		return self.__str__()
 		
-if __name__ == '__main__':
-	
-	piece = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "brazos,cuerpo,piernas")
-
-	print piece.armourBonus(), piece.localizations

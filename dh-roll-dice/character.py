@@ -38,9 +38,7 @@ class Character:
 			else:
 				location = ('0' + str(diceRoll))[::-1]
 
-			locationName = darkheresy.location(int(location))
-			
-			logging.debug("%s impacta en %s y puede causar %d puntos de daño " % (self.name, locationName, damage))
+			logging.debug("%s impacta en %s y puede causar %d puntos de daño " % (self.name, Armour.describelocation(int(location)), damage))
 
 			return location, damage
 		else:
@@ -51,7 +49,7 @@ class Character:
 		
 		bonificador = self.weapon.parryBonus()
 		
-		if darkheresy.D100() <= (self.armascc + bonificador):
+		if darkheresy.D100() <= (self.ballisticskill + bonificador):
 			logging.debug('%s para el ataque' % self.name)
 			return True
 		else:
@@ -110,35 +108,5 @@ class Character:
 	def __repr__(self):
 		return self.__str__()
 
-if __name__ == '__main__':
-
-	pj = {
-		'name' : 'Kratos',
-		'wounds' : 13,
-		'agility' : 31,
-		'toughness' : 35,
-		'strength' : 31,
-		'armascc' : 50
-		}
-
-	w = {
-			'name' : 'espadaEnergia', 
-			'damage': '1D10+5', 
-			'properties' : [ 'EQUILIBRADA' ] 
-			}
-
-	wp = Weapon(w['name'], '1D10+2', 0,  w['properties'])
-
-
-	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs")
-	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest")
-	piece3 = ArmorPiece("armadura de placas feudal", "primitivo", 5, 22, "head,arms,chest,legs")
-
-	armour = Armour([piece1, piece2, piece3])
-		
-		
-	a = Character(pj['name'], wp, armour,  pj)
-
-	print a.weapon
 
 	

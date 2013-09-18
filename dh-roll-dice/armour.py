@@ -1,16 +1,41 @@
-
+# coding=UTF-8
 from armorPiece import ArmorPiece
 import darkheresy
+import logging
 class Armour:
+
+	@classmethod
+	def describelocation(cls, n=45):
+
+		# pongo el 45 pq especifica que los ataques
+		# q no digan nada van al pecho.
+
+		locName = 'UNKNOWN'
+		if n > 0 and n < 11:
+			locName = 'head'
+		elif n > 10 and n < 21:
+			locName = 'arms'
+		elif n > 20 and n < 31:
+			locName = 'arms'
+		elif n > 30 and n < 71:
+			locName = 'chest'
+		elif n > 70 and n < 86:
+			locName = 'legs'
+		elif n > 85 and n < 101:
+			locName = 'legs'
+		return locName
 
 	def __init__(self, pieces=[]):
 		self.pieces = pieces
 
 
 	def protectionByLoc(self, localization):
-		n = int(localization)
+		
+		location_number = int(localization)
 
-		locName = darkheresy.location(n)
+		logging.debug("Location_number is %d " % (location_number))
+
+		locName = Armour.describelocation(location_number)
 
 		# print locName, localization
 		# Now we search for locName in
@@ -45,14 +70,5 @@ class Armour:
 	def __repr__(self):
 		return self.__str__()
 
-if __name__ == '__main__':
-
-	piece1 = ArmorPiece("cuero de pandillero", "primitivo", 1, 6, "arms,chest,legs", [ 'PRIMITIVA' ])
-	piece2 = ArmorPiece("pieles de animales",  "primitivo", 2, 10, "chest", [ 'PRIMITIVA' ])
-	piece3 = ArmorPiece("armadura de placas feudal", "primitivo", 5, 22, "head,arms,chest,legs", [ 'PRIMITIVA' ])
-
-	armour = Armour([piece1, piece2, piece3])
-
-	print armour
 
 	
