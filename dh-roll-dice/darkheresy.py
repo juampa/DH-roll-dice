@@ -43,62 +43,6 @@ def parse_input(in_string):
 
     return r, k, mod
 
-def rawRollDamage( func, character ):
-	tirada = func()
-	if (tirada == 10) and EXPAND:
-		extra = 0
-		while(attackRoll( character )):
-			tirada = func()
-			extra = extra + tirada
-			if (tirada != 10):
-				break
-		tirada = tirada + extra
-	return tirada
-
-
-def weaponDamage(character):
-
-	r,k,bonificador = parse_input(character.weapon.damage)
-
-	func = None
-	if k == 10:
-		func = D10
-	if k == 5:
-		func = D5
-
-	rolls = []
-	for i in range(r):
-		rolls.append(rawRollDamage(func, character))
-
-	
-	# Si el weapon es desgarradora tiro un dado mas
-	if character.weapon.DESGARRADORA:
-		rolls.append(rawRollDamage(func, character))
-	
-	# Algunas armas tienen bonificadores al danio.
-	bonificador += character.weapon.damageBonus()
-	
-	# Ordenamos de mayor a menor		
-	rolls.sort(reverse=True)
-
-	# Nos quedamos con las r primeras y las sumamos...
-	return sum(rolls[:r]) + bonificador
-
-
-def attackRoll( character, distance=-1 ):
-	
-	# En funcion del arma 
-	bonificador = character.weapon.attackBonus()
-
-	# Calculamos el bonificador por distancia
-	# si es necesario.
-	if distance >= 0:
-		bonificador += character.weapon.distanceBonus(distance)
-
-
-	result = D100() 
-
-	return result if (result <= (character.ballisticskill + bonificador)) else None
 
 
 def defineInitiative(pj1, pj2) :

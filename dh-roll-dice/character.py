@@ -23,11 +23,16 @@ class Character:
 		else:
 			raise AttributeError("I dont have the property %s" % name)
 
+
+	def initiative(self):
+		return darkheresy.D10() + (self.agility/10)	
+
+
 	def attack(self):
-		diceRoll = darkheresy.attackRoll(self)
+		diceRoll = self.attackRoll()
 		# Si hemos impactado ya calculamos el danio.
 		if diceRoll:
-			damage =  darkheresy.weaponDamage(self)
+			damage =  self.weaponDamage()
 
 			# sumamos la bonificacion de fuerza del personaje
 			damage += (self.strength / 10)
@@ -45,6 +50,19 @@ class Character:
 			logging.debug("%s falla el ataque" % (self.name))
 			return None,None
 
+	def attackRoll( self, distance=-1 ):
+	
+		# En funcion del arma 
+		bonificador = self.weapon.attackBonus()
+
+		# Calculamos el bonificador por distancia
+		# si es necesario.
+		if distance >= 0:
+			bonificador += self.weapon.distanceBonus(distance)
+		result = darkheresy.D100() 
+		return result if (result <= (self.ballisticskill + bonificador)) else None
+
+
 	def parry(self):
 		
 		bonificador = self.weapon.parryBonus()
@@ -57,8 +75,47 @@ class Character:
 			return False
 	
 
-	def initiative( self ):
-		return darkheresy.D10() + (self.agility/10)	
+	def weaponDamage(self):
+
+		r,k,bonificador = darkheresy.parse_input(self.weapon.damage)
+
+		func = None
+		if k == 10:
+			func = darkheresy.D10
+		if k == 5:
+			func = darkheresy.D5
+
+		rolls = []
+		for i in range(r):
+			rolls.append(self.rawRollDamage(func))
+
+		# Si el weapon es desgarradora tiro un dado mas
+		if self.weapon.DESGARRADORA:
+			rolls.append(self.rawRollDamage(func))
+		
+		# Algunas armas tienen bonificadores al danio.
+		bonificador += self.weapon.damageBonus()
+		
+		# Ordenamos de mayor a menor		
+		rolls.sort(reverse=True)
+
+		# Nos quedamos con las r primeras y las sumamos...
+		return sum(rolls[:r]) + bonificador
+
+	""" 
+		"The Emperor is looking you" DHrule
+	"""
+	def rawRollDamage( self, func ):
+		tirada = func()
+		if (tirada == 10) and darkheresy.EXPAND:
+			extra = 0
+			while(self.attackRoll( )):
+				tirada = func()
+				extra = extra + tirada
+				if (tirada != 10):
+					break
+			tirada = tirada + extra
+		return tirada
 
 	def sufferDamage(self, localization, damage, enemyWeapon=None):
 
@@ -76,12 +133,12 @@ class Character:
 		armour = 0 if armour < 0 else armour
 
 		increase_armour = armour + (self.toughness/10)
+
 		# Descontamos armadura y bonificacion por resistencia.
-		# TODO Mirar la localizacion.
 		sufferedDamage = damage - increase_armour
 
 		if sufferedDamage > 0:
-			self.actualWounds = self.actualWounds - sufferedDamage
+			self.actualWounds -= sufferedDamage
 			logging.debug("%s sufre %d puntos tras absorver %d" % (self.name, sufferedDamage, increase_armour))
 			logging.debug("%s su salud es ahora %d" % (self.name, self.actualWounds))
 		else:

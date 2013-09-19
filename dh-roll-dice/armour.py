@@ -33,8 +33,6 @@ class Armour:
 		
 		location_number = int(localization)
 
-		logging.debug("Location_number is %d " % (location_number))
-
 		locName = Armour.describelocation(location_number)
 
 		# print locName, localization

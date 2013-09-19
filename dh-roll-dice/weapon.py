@@ -79,19 +79,3 @@ class Weapon:
 
 	def __str__(self):
 		return "%s %s" % (self.name, self.damage)
-
-if __name__ == '__main__':
-
-	try:
-		w = {
-			'name' : 'espadaEnergia', 
-			'damage': '1D10+5', 
-			'properties' : [ 'EQUILIBRADA' ] 
-			}
-
-		weapon = Weapon(w['name'], '1D10+2', 0,  w['properties'])
-
-
-		print weapon.name, weapon.parryBonus(), weapon.attackBonus()
-	except Exception as exception:
-		print exception
